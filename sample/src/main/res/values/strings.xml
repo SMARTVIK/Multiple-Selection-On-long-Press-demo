@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">StickyHeadersRecyclerView</string>
+    <string name="button_update">Start Update</string>
+    <string name="like">LIkes</string>
+    <string name="get_similar">GET SIMILAR</string>
+
+</resources>

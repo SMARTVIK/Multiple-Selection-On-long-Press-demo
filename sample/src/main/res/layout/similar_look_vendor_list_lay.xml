@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ll_similar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#123456"
+    android:orientation="vertical"
+    android:visibility="visible">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/grey_3"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingBottom="@dimen/padd_ver_small"
+        android:paddingLeft="@dimen/padd_hor_regular"
+        android:paddingRight="@dimen/padd_hor_regular"
+        android:paddingTop="@dimen/padd_ver_small">
+
+        <TextView
+            android:id="@+id/tv_label_similar"
+            style="@style/black.small"
+            android:layout_weight="1"
+            android:text="Get similar offer" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/rl_similar_vendor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingBottom="@dimen/padd_ver_regular"
+        android:paddingTop="@dimen/padd_ver_regular">
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_dis_msg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#f6edd6"
+        android:padding="@dimen/padd_hor_regular"
+        android:visibility="gone" />
+</LinearLayout>

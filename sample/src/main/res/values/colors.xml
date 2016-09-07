@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="grey_3">#f8f8f8</color>
+    <color name="grey">#e8e8e8</color>
+    <color name="divider">#C7D1D8</color>
+    <color name="brown">#9c0101</color>
+    <color name="red_text_bg">#BE0000</color>
+</resources>
