@@ -3,6 +3,7 @@ package com.timehop.stickyheadersrecyclerview;
 import android.graphics.Rect;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -86,10 +87,8 @@ public class HeaderPositionCalculator {
       View viewAfterNextHeader = getFirstViewUnobscuredByHeader(recyclerView, header);
       int firstViewUnderHeaderPosition = recyclerView.getChildAdapterPosition(viewAfterNextHeader);
       View secondHeader = mHeaderProvider.getHeader(recyclerView, firstViewUnderHeaderPosition);
-      translateHeaderWithNextHeader(recyclerView, mOrientationProvider.getOrientation(recyclerView), bounds,
-          header, viewAfterNextHeader, secondHeader);
+      translateHeaderWithNextHeader(recyclerView, mOrientationProvider.getOrientation(recyclerView), bounds, header, viewAfterNextHeader, secondHeader);
     }
-
     return bounds;
   }
 
@@ -98,9 +97,11 @@ public class HeaderPositionCalculator {
     Rect headerMargins = mDimensionCalculator.getMargins(header);
     if (orientation == LinearLayoutManager.VERTICAL) {
       translationX = firstView.getLeft() + headerMargins.left;
-      translationY = Math.max(
-          firstView.getTop() - header.getHeight() - headerMargins.bottom,
-          getListTop(recyclerView) + headerMargins.top);
+//      translationY = Math.max(firstView.getTop() - header.getHeight() - headerMargins.bottom, getListTop(recyclerView) + headerMargins.top);
+      translationY = Math.max(firstView.getTop() - header.getHeight() - headerMargins.bottom, getListTop(recyclerView));
+
+      Log.d("translation y ","translation y "+translationY);
+
     } else {
       translationY = firstView.getTop() + headerMargins.top;
       translationX = Math.max(
@@ -179,8 +180,6 @@ public class HeaderPositionCalculator {
 
   /**
    * Determines if an item is obscured by a header
-   *
-   *
    * @param parent
    * @param item        to determine if obscured by header
    * @param header      that might be obscuring the item

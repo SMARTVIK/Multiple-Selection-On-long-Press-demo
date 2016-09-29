@@ -3,6 +3,7 @@ package com.timehop.stickyheadersrecyclerview.rendering;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -29,7 +30,6 @@ public class HeaderRenderer {
 
   /**
    * Draws a header to a canvas, offsetting by some x and y amount
-   *
    * @param recyclerView the parent recycler view for drawing the header into
    * @param canvas       the canvas on which to draw the header
    * @param header       the view to draw as the header
@@ -38,15 +38,16 @@ public class HeaderRenderer {
    */
   public void drawHeader(RecyclerView recyclerView, Canvas canvas, View header, Rect offset) {
     canvas.save();
-
     if (recyclerView.getLayoutManager().getClipToPadding()) {
       // Clip drawing of headers to the padding of the RecyclerView. Avoids drawing in the padding
       Rect clipRect = getClipRectForHeader(recyclerView, header);
       canvas.clipRect(clipRect);
     }
-
     canvas.translate(offset.left, offset.top);
 
+    Log.d("left and top offset ","left and top offset "+offset.left+" "+offset.top);
+
+//    canvas.translate(offset.left,0);
     header.draw(canvas);
     canvas.restore();
   }
@@ -57,7 +58,6 @@ public class HeaderRenderer {
    * FIXME: Currently right margin in VERTICAL orientation and bottom margin in HORIZONTAL
    * orientation are clipped so they look accurate, but the headers are not being drawn at the
    * correctly smaller width and height respectively.
-   *
    * @param recyclerView for which to provide a header
    * @param header       for clipping
    * @return a {@link Rect} for clipping a provided header to the padding of a recycler view

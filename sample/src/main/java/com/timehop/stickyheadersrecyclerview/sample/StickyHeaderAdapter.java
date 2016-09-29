@@ -2,12 +2,14 @@ package com.timehop.stickyheadersrecyclerview.sample;
 
 import android.content.Context;
 import android.provider.SyncStateContract;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -33,6 +35,7 @@ public class StickyHeaderAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private Context context;
     private List<Datum> list;
     private LayoutInflater inflater;
+    private boolean marginFromTop;
 
     public StickyHeaderAdapter(Context context, List<Datum> list, Response response) {
         this.context = context;
@@ -182,13 +185,13 @@ public class StickyHeaderAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 Picasso.with(context).load(mVendorThumbnailPath + vendorlist.getVendorImage()).placeholder(R.drawable.ic_launcher).into(view);
             }
         } else {
-            holder.llSimilar.setVisibility(View.GONE);
+           /* holder.llSimilar.setVisibility(View.GONE);
             Log.d(TAG, "no similar suggestions are availlable ");
             LinearLayout.LayoutParams buttonLayoutParams = (LinearLayout.LayoutParams) holder.likeShareFavLayout.getLayoutParams();
             if (buttonLayoutParams != null) {
                 buttonLayoutParams.setMargins(0, 0, 0, 150);
                 holder.likeShareFavLayout.setLayoutParams(buttonLayoutParams);
-            }
+            }*/
         }
     }
 
@@ -210,9 +213,16 @@ public class StickyHeaderAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public void onBindHeaderViewHolder(HeaderViewHolder holder, int position) {
-
         final Datum data = list.get(position);
-
+        if (position!=0 && list.get(position-1).getTagswiseVendorlist().size()>0){
+            FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) holder.headerView.getLayoutParams();
+            layoutParams.topMargin=holder.headerView.getHeight();
+            holder.headerView.setLayoutParams(layoutParams);
+        }else{
+            FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) holder.headerView.getLayoutParams();
+            layoutParams.topMargin=0;
+            holder.headerView.setLayoutParams(layoutParams);
+        }
         holder.tvUserName.setText(data.getVendorName());
         String profileImgPath = null;
         if (data != null && data.getType() != null && data.getType().equals("4")) {
@@ -221,6 +231,12 @@ public class StickyHeaderAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             profileImgPath = mVendorImagePath + data.getVendorImage();
         }
         Glide.with(context).load(profileImgPath).placeholder(R.drawable.ic_launcher).fitCenter().into(holder.ivProfile);
+/*
+        Glide.with(context)
+                .load("http://beta.groomefy.com//vendor_image/thumbnails/profile_4785.png")
+                .placeholder(R.drawable.ic_launcher)
+                .into(holder.ivProfile);
+*/
     }
 
     @Override
@@ -254,7 +270,12 @@ public class StickyHeaderAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         this.notifyDataSetChanged();
     }
 
+    public void setMarginFromTop(boolean b) {
+        this.marginFromTop = b;
+    }
+
     public class TrendingListViewHolder extends RecyclerView.ViewHolder {
+        private final CardView cardView;
         private ImageView ivProfile, ivMore, ivFullImg, ivLike, ivStyleBook, ivShare;
         private TextView tvUserName, tvLike, tvMsg, tvTime, tvSimilarLabel, tvRates, tvdes, tvErrMsg;
         private LinearLayout llSimilar;
@@ -280,7 +301,7 @@ public class StickyHeaderAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             tvdes = (TextView) itemView.findViewById(R.id.tv_dis_msg);
             tvMsg = (TextView) itemView.findViewById(R.id.tv_msg);
             tvErrMsg = (TextView) itemView.findViewById(R.id.err_msg);
-
+            cardView = (CardView)itemView.findViewById(R.id.parent_view);
 
         }
     }

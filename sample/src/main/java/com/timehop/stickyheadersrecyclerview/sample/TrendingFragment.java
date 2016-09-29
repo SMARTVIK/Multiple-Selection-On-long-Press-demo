@@ -60,6 +60,7 @@ public class TrendingFragment extends Fragment implements View.OnClickListener, 
     private Bitmap theBitmap;      //contains the bitmap of the image to be shared
     private SwipeRefreshLayout swipeToRefreshList;
     private SwipeRefreshLayout swipeToRefreshGrid;
+    private boolean decorationAdded = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -75,7 +76,10 @@ public class TrendingFragment extends Fragment implements View.OnClickListener, 
         swipeToRefreshList.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                mListAdapter.setMarginFromTop(true);
                 pageno = 1;
+
+                headersDecor.invalidateHeaders();
                 getTrendingData(swipeToRefreshList);
             }
         });
@@ -149,10 +153,11 @@ public class TrendingFragment extends Fragment implements View.OnClickListener, 
      * Adding item decorator for sticky header view
      */
     private void addHeaderDeconrator() {
+        decorationAdded = true;
         Log.d(TAG, "adding header decorator");
         headersDecor = new StickyRecyclerHeadersDecoration(mListAdapter);
         trendingListView.addItemDecoration(headersDecor);
-        trendingListView.addItemDecoration(new DividerDecoration(getActivity()));
+//        trendingListView.addItemDecoration(new DividerDecoration(getActivity()));
         stickyRecyclerHeadersTouchListener = new StickyRecyclerHeadersTouchListener(trendingListView, headersDecor);
         stickyRecyclerHeadersTouchListener.setOnHeaderClickListener(new StickyRecyclerHeadersTouchListener.OnHeaderClickListener() {
             @Override
@@ -166,7 +171,47 @@ public class TrendingFragment extends Fragment implements View.OnClickListener, 
             @Override
             public void onChanged() {
                 if (headersDecor != null) {
+                    trendingListView.invalidateItemDecorations();
                     headersDecor.invalidateHeaders();
+                    Log.d("headers invalidated ","headers invalidated once");
+                }
+            }
+        });
+
+        final Runnable  mInvalidate = new Runnable() {
+            @Override
+            public void run() {
+                trendingListView.invalidateItemDecorations();
+                headersDecor.invalidateHeaders();
+            }
+        };
+
+        mListAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onChanged() {
+                if (mInvalidate != null) {
+                    trendingListView.post(mInvalidate);
+                }
+            }
+
+            @Override
+            public void onItemRangeChanged(int positionStart, int itemCount) {
+                if (mInvalidate != null) {
+                    trendingListView.post(mInvalidate);
+                }
+            }
+
+            @Override
+            public void onItemRangeInserted(int positionStart, int itemCount) {
+                if (mInvalidate != null) {
+                    trendingListView.post(mInvalidate);
+                }
+            }
+
+            @Override
+            public void onItemRangeRemoved(int positionStart, int itemCount) {
+                if (mInvalidate != null) {
+                    trendingListView.post(mInvalidate);
                 }
             }
         });
@@ -174,6 +219,9 @@ public class TrendingFragment extends Fragment implements View.OnClickListener, 
     // get all trending images form server
     private void getTrendingData() {
 
+        if (pageno!=1){
+//            headersDecor.ITEM_OFFSET =0;
+        }
         WebServices.trendingimages(String.valueOf(pageno), "145", " ", keyword, lat, log, new TextHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, String responseString) {
@@ -186,8 +234,6 @@ public class TrendingFragment extends Fragment implements View.OnClickListener, 
                 loading = false;
             }
         });
-
-
     }
 
     // get all trending images form server
@@ -228,13 +274,17 @@ public class TrendingFragment extends Fragment implements View.OnClickListener, 
             if (getActivity() == null) {
                 return;
             }
+
             list.addAll(response.getData());
             mListAdapter = new StickyHeaderAdapter(getActivity(), list, response);
             trendingListView.setAdapter(mListAdapter);
-            addHeaderDeconrator();
+
+            trendingListView.removeItemDecoration(headersDecor);
+            if(trendingListView.getAdapter()!=null) {
+                headersDecor = new StickyRecyclerHeadersDecoration(mListAdapter);
+                trendingListView.addItemDecoration(headersDecor);
+            }
         } else {
-            addHeaderDeconrator();
-            trendingListView.addItemDecoration(headersDecor);
             mListAdapter.addData(response.getData());
             if (trendingListView.getAdapter() == null) {
                 trendingListView.setAdapter(mListAdapter);
@@ -249,10 +299,12 @@ public class TrendingFragment extends Fragment implements View.OnClickListener, 
             }
             mListAdapter = new StickyHeaderAdapter(getActivity(), list, response);
             trendingListView.setAdapter(mListAdapter);
-            addHeaderDeconrator();
+            trendingListView.removeItemDecoration(headersDecor);
+            if (trendingListView.getAdapter() != null) {
+                headersDecor = new StickyRecyclerHeadersDecoration(mListAdapter);
+                trendingListView.addItemDecoration(headersDecor);
+            }
         } else {
-            addHeaderDeconrator();
-            trendingListView.addItemDecoration(headersDecor);
             mListAdapter.addData(response.getData(), isSwipeToRefresh);
             if (trendingListView.getAdapter() == null) {
                 trendingListView.setAdapter(mListAdapter);
